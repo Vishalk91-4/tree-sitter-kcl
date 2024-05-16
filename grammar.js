@@ -76,6 +76,29 @@ const KEYWORDS = {
   TYPE: "type",
 }
 
+// Reserved Words
+const RESERVERD_WORDS = {
+  PASS: "pass",
+  RETURN: "return",
+  VALIDATE: "validate",
+  FLOW: "flow",
+  WITH: "with",
+  EXCEPT: "except",
+  RAISE: "raise",
+  TRY: "try",
+  FINALLY: "finally",
+  WHILE: "while",
+  STRUCT: "struct",
+  YIELD: "yield",
+  GLOBAL: "global",
+  NONLOCAL: "nonlocal",
+  DEL: "del",
+  DEF: "def",
+  CLASS: "class",
+  FROM: "from",
+  FINAL: "final",
+}
+
 const TYPES = {
   ANY: "any",
   STRING: "str",
@@ -426,6 +449,7 @@ module.exports = grammar({
       $.lambda_expr,
       $.schema_expr,
       $.paren_expression,
+      $.slice_expression,
     ),
 
     paren_expression: $ => seq(
@@ -435,6 +459,13 @@ module.exports = grammar({
     not_operator: $ => prec(PREC.not, seq(
       'not',
       field('argument', $.expression),
+    )),
+
+    slice_expression: $ => prec(PREC.call, seq(
+      field('start', optional($.expression)),
+      ':',
+      field('stop', optional($.expression)),
+      optional(seq(':', field('step', optional($.expression))))
     )),
 
     boolean_operator: $ => choice(
@@ -578,6 +609,9 @@ module.exports = grammar({
     dict_type: $ => prec.left(seq('{', optional($.type), ':', $.type, '}')),
     literal_type: $ => choice($.string, $.float, $.integer, $.true, $.false),
 
+    reserved_word: $ => choice(
+      ...Object.keys(RESERVED_WORDS).map(word => choice(word, { type: 'ReservedWord' }))
+     ),
     // Arguments
 
     keyword_argument: $ => seq(
