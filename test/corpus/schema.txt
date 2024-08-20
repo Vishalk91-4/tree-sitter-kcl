@@ -395,3 +395,67 @@ rule SomeChecker for SomeProtocol:
                 (identifier)))
             (select_suffix
               (identifier))))))))
+
+================================================================================
+Schema Mixin Statement
+================================================================================
+
+schema Parent:
+    mixin [NameMixin]
+    age: int
+   
+--------------------------------------------------------------------------------
+
+(module
+  (schema_statement
+    (identifier)
+    (block
+      (mixin_statement
+        (list
+          (attribute
+            (identifier))))
+      (assignment
+        (dotted_name
+          (identifier))
+        (basic_type)))))
+
+================================================================================
+Schema Statement with checks
+================================================================================
+
+schema NameMixin:
+  check:
+    name None
+   
+--------------------------------------------------------------------------------
+
+(module
+  (schema_statement
+    (identifier)
+    (block
+      (check_statement
+        (attribute
+          (identifier)))
+      (none))))
+
+================================================================================
+Schema Statement with Data
+================================================================================
+
+schema Data for DataProtocol:
+    x: str = data
+   
+--------------------------------------------------------------------------------
+
+(module
+  (schema_statement
+    (identifier)
+    (identifier)
+    (block
+      (assignment
+        (dotted_name
+          (identifier))
+        (type
+          (basic_type))
+        (attribute
+          (identifier))))))
